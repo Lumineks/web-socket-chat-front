@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import Input from "@material-ui/core/Input";
@@ -9,6 +9,9 @@ import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import { Button, CircularProgress } from "@material-ui/core";
+import Context from "../../context/userContext";
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -17,21 +20,28 @@ const useStyles = makeStyles((theme) => ({
   },
   textField: {
     width: "100%",
+    marginTop: 8,
+    marginBottom: 8,
   },
-  margin: {
-    margin: "0 auto",
+  spinner: {
+    margin: "30px auto 0",
+  },
+  btnMargin: {
+    marginTop: 30,
   },
 }));
 
 const Login = () => {
+  const userCxt = useContext(Context);
   const classes = useStyles();
   const [values, setValues] = useState({
-    amount: "",
     password: "",
-    weight: "",
-    weightRange: "",
     showPassword: false,
+    userName: "",
+    email: "",
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
@@ -45,12 +55,52 @@ const Login = () => {
     event.preventDefault();
   };
 
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    const userData = {
+      username: values.userName,
+      password: values.password,
+      email: values.email,
+    };
+
+    axios
+      .post("/login", userData)
+      .then((response) => {
+        // console.log(response);
+        userCxt.login(response.data);
+      })
+      .catch((error) => console.log(error));
+
+    // userCxt.login('', userData.username, false, false, false);
+  };
+
   return (
     <div>
-      <form className={clsx(classes.form)} autoComplete="off">
-        <TextField id="username" label="Имя пользователя" />
-        <TextField id="email" label="Email адрес" />
-        <FormControl className={clsx(classes.margin, classes.textField)}>
+      <h2>Login</h2>
+      <form
+        className={clsx(classes.form)}
+        autoComplete="off"
+        onSubmit={handleLogin}
+      >
+        <FormControl className={clsx(classes.textField)}>
+          <TextField
+            id="username"
+            label="Имя пользователя"
+            onChange={handleChange("userName")}
+            required
+          />
+        </FormControl>
+        <FormControl className={clsx(classes.textField)}>
+          <TextField
+            id="email"
+            label="Email адрес"
+            onChange={handleChange("email")}
+            type="email"
+            required
+          />
+        </FormControl>
+        <FormControl className={clsx(classes.textField)}>
           <InputLabel htmlFor="standard-adornment-password">
             Password
           </InputLabel>
@@ -70,7 +120,20 @@ const Login = () => {
                 </IconButton>
               </InputAdornment>
             }
+            required
           />
+          {isLoading ? (
+            <CircularProgress className={clsx(classes.spinner)} />
+          ) : (
+            <Button
+              className={clsx(classes.btnMargin)}
+              variant="contained"
+              color="primary"
+              type="submit"
+            >
+              Login
+            </Button>
+          )}
         </FormControl>
       </form>
     </div>
