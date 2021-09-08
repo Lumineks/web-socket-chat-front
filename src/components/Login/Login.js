@@ -76,7 +76,10 @@ const Login = () => {
         setIsLoading(false);
         userCxt.login(response.data);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+        setIsLoading(false);
+      });
   };
 
   return (

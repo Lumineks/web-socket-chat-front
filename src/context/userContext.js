@@ -3,7 +3,7 @@ import React ,{ useState } from "react";
 const userContext = React.createContext({
   token: "",
   isLoggedIn: false,
-  userName: "",
+  name: "",
   email: "",
   isMuted: false,
   isBanned: false,
@@ -20,7 +20,7 @@ export const UserContextProvider = (props) => {
   const [isMuted, setIsMuted] = useState("");
   const [isBanned, setIsBanned] = useState("");
 
-//   const userIsLoggedIn = !!token;
+  // const userIsLoggedIn = !!token;
   const userIsLoggedIn = true;
 
   const loginHandler = (userData) => {

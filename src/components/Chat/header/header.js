@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState} from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Button, Grid } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -7,7 +7,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import clsx from "clsx";
-import Context from "../../../context/userContext";
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -16,8 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = () => {
-  const userCxt = useContext(Context);
+const Header = (props) => {
   const classes = useStyles();
   const theme = useTheme();
 
@@ -32,7 +30,7 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    userCxt.logout();
+    props.closeConnection();
   };
 
   let logoutContent = (
