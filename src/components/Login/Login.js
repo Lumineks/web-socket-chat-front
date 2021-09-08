@@ -14,6 +14,11 @@ import Context from "../../context/userContext";
 import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
+  header: {
+    paddingTop: 15,
+    paddingBottom: 5,
+    textAlign: "center",
+  },
   form: {
     maxWidth: 414,
     margin: "auto",
@@ -26,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   spinner: {
     margin: "30px auto 0",
   },
-  btnMargin: {
+  btn: {
     marginTop: 30,
   },
 }));
@@ -58,6 +63,7 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
+    setIsLoading(true);
     const userData = {
       username: values.userName,
       password: values.password,
@@ -67,17 +73,17 @@ const Login = () => {
     axios
       .post("/login", userData)
       .then((response) => {
-        // console.log(response);
+        setIsLoading(false);
         userCxt.login(response.data);
       })
       .catch((error) => console.log(error));
-
-    // userCxt.login('', userData.username, false, false, false);
   };
 
   return (
     <div>
-      <h2>Login</h2>
+      <header className={clsx(classes.header)}>
+        <h1>Авторизация</h1>
+      </header>
       <form
         className={clsx(classes.form)}
         autoComplete="off"
@@ -101,18 +107,17 @@ const Login = () => {
           />
         </FormControl>
         <FormControl className={clsx(classes.textField)}>
-          <InputLabel htmlFor="standard-adornment-password">
+          <InputLabel htmlFor="password" required>
             Password
           </InputLabel>
           <Input
-            id="standard-adornment-password"
+            id="password"
             type={values.showPassword ? "text" : "password"}
             value={values.password}
             onChange={handleChange("password")}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
-                  aria-label="toggle password visibility"
                   onClick={handleClickShowPassword}
                   onMouseDown={handleMouseDownPassword}
                 >
@@ -120,18 +125,17 @@ const Login = () => {
                 </IconButton>
               </InputAdornment>
             }
-            required
           />
           {isLoading ? (
             <CircularProgress className={clsx(classes.spinner)} />
           ) : (
             <Button
-              className={clsx(classes.btnMargin)}
+              className={clsx(classes.btn)}
               variant="contained"
               color="primary"
               type="submit"
             >
-              Login
+              Войти
             </Button>
           )}
         </FormControl>

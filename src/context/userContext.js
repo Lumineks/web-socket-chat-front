@@ -23,7 +23,6 @@ export const UserContextProvider = (props) => {
 //   const userIsLoggedIn = !!token;
   const userIsLoggedIn = true;
 
-// accept just user object
   const loginHandler = (userData) => {
     setToken(userData.token);
     setName(userData.name);
