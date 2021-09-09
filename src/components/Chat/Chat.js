@@ -7,6 +7,7 @@ import InfoPanel from "./infoPanel/InfoPanel";
 import Message from "./Message/Message";
 import Header from "./header/header";
 import Controls from "./Controls/Controls";
+import TopPanel from "./TopPanel/TopPanel";
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -22,6 +23,7 @@ const Chat = () => {
 
   const [connection, setConnection] = useState(null);
   const [usersOnline, setUsersOnline] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
     const connection = new WebSocket("ws://localhost:5000");
@@ -53,13 +55,25 @@ const Chat = () => {
       const parsedData = JSON.parse(event.data);
       console.log(parsedData);
       switch (parsedData.event) {
-        case "message":
+        case "message": {
           break;
-
-        case "usersOnline":
+        }
+        case "usersOnline": {
           console.log(parsedData);
           setUsersOnline(parsedData.users);
           break;
+        }
+        case "muteToggled": {
+          userCxt.setMute(parsedData.isMuted);
+
+          break;
+        }
+        case "allUsers": {
+          console.log("all users from db", parsedData.users);
+          setAllUsers(parsedData.users);
+
+          break;
+        }
         default:
           break;
       }
@@ -85,6 +99,32 @@ const Chat = () => {
     }
   };
 
+  const handleMute = (isMuted, name) => {
+    const message = JSON.stringify({
+      event: "toggleMute",
+      isMuted: isMuted,
+      token: userCxt.token,
+      userToMuteName: name,
+    });
+
+    if (connection.readyState) {
+      connection.send(message);
+    }
+  };
+
+  const handleBan = (isBanned, name) => {
+    const message = JSON.stringify({
+      event: "toggleBan",
+      isBanned: isBanned,
+      token: userCxt.token,
+      userToBanName: name,
+    });
+
+    if (connection.readyState) {
+      connection.send(message);
+    }
+  };
+
   const handleClose = () => {
     const data = JSON.stringify({
       event: "logout",
@@ -99,24 +139,27 @@ const Chat = () => {
     <>
       <Header closeConnection={handleClose} />
       <Box padding={3} boxShadow={3}>
-        
-
-          {/* <InfoPanel usersOnline={usersOnline} /> */}
-          <Grid
-            container
-            direction="column-reverse"
-            wrap="nowrap"
-            className={clsx(classes.list)}
-          >
-            <Message self />
-            <Message />
-            <Message />
-            <Message self />
-            <Message self />
-            <Message />
-          </Grid>
-          <Controls send={handleSendMessage} />
-
+        <TopPanel
+          usersOnline={usersOnline}
+          allUsers={allUsers}
+          handleMute={handleMute}
+          handleBan={handleBan}
+        />
+        {/* <InfoPanel usersOnline={usersOnline} /> */}
+        <Grid
+          container
+          direction="column-reverse"
+          wrap="nowrap"
+          className={clsx(classes.list)}
+        >
+          <Message self />
+          <Message />
+          <Message />
+          <Message self />
+          <Message self />
+          <Message />
+        </Grid>
+        <Controls send={handleSendMessage} />
       </Box>
     </>
   );

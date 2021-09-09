@@ -1,4 +1,4 @@
-import React ,{ useState } from "react";
+import React, { useState } from "react";
 
 const userContext = React.createContext({
   token: "",
@@ -10,6 +10,8 @@ const userContext = React.createContext({
   isAdmin: false,
   login: (token, name, isAdmin, isMuted, isBanned) => {},
   logout: () => {},
+  setMute: (mute) => {},
+  setBan: (ban) => {},
 });
 
 export const UserContextProvider = (props) => {
@@ -20,8 +22,8 @@ export const UserContextProvider = (props) => {
   const [isMuted, setIsMuted] = useState("");
   const [isBanned, setIsBanned] = useState("");
 
-  // const userIsLoggedIn = !!token;
-  const userIsLoggedIn = true;
+  const userIsLoggedIn = !!token;
+  // const userIsLoggedIn = true;
 
   const loginHandler = (userData) => {
     setToken(userData.token);
@@ -41,6 +43,14 @@ export const UserContextProvider = (props) => {
     setIsBanned(false);
   };
 
+  const handleMute = (mute) => {
+    if (isAdmin) setIsMuted(mute);
+  };
+
+  const handleBan = (ban) => {
+    if (isAdmin) setIsBanned(ban);
+  };
+
   const contextValue = {
     token: token,
     isLoggedIn: userIsLoggedIn,
@@ -51,6 +61,8 @@ export const UserContextProvider = (props) => {
     isAdmin: isAdmin,
     login: loginHandler,
     logout: logoutHandler,
+    setMute: handleMute,
+    setBan: handleBan,
   };
 
   return (

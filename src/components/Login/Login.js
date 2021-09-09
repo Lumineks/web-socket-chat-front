@@ -111,7 +111,7 @@ const Login = () => {
         </FormControl>
         <FormControl className={clsx(classes.textField)}>
           <InputLabel htmlFor="password" required>
-            Password
+            Пароль
           </InputLabel>
           <Input
             id="password"
