@@ -24,6 +24,7 @@ const Chat = () => {
   const [connection, setConnection] = useState(null);
   const [usersOnline, setUsersOnline] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const connection = new WebSocket("ws://localhost:5000");
@@ -51,11 +52,17 @@ const Chat = () => {
     };
 
     connection.onmessage = (event) => {
-      // console.log(data);
       const parsedData = JSON.parse(event.data);
       console.log(parsedData);
       switch (parsedData.event) {
         case "message": {
+          const { message } = parsedData;
+          setMessages((prevmsges) => {
+            const messages = [...prevmsges];
+            messages.unshift(message);
+            return messages;
+          });
+
           break;
         }
         case "usersOnline": {
@@ -64,6 +71,9 @@ const Chat = () => {
           break;
         }
         case "muteToggled": {
+          console.log(`call setMute  -  ${userCxt.isMuted} - `);
+          
+          // userCxt.logout();
           userCxt.setMute(parsedData.isMuted);
 
           break;
@@ -72,6 +82,15 @@ const Chat = () => {
           console.log("all users from db", parsedData.users);
           setAllUsers(parsedData.users);
 
+          break;
+        }
+        case "refreshOnlineUsers": {
+          const data = JSON.stringify({
+            event: "login",
+            token: userCxt.token,
+          });
+
+          connection.send(data);
           break;
         }
         default:
@@ -88,9 +107,11 @@ const Chat = () => {
 
   const handleSendMessage = (text) => {
     console.log(userCxt);
+    const date = new Date().toLocaleString();
     const message = JSON.stringify({
       event: "message",
       text: text,
+      date: date,
       token: userCxt.token,
     });
     console.log(message);
@@ -107,7 +128,7 @@ const Chat = () => {
       userToMuteName: name,
     });
 
-    if (connection.readyState) {
+    if (connection.readyState && userCxt.isAdmin) {
       connection.send(message);
     }
   };
@@ -120,12 +141,12 @@ const Chat = () => {
       userToBanName: name,
     });
 
-    if (connection.readyState) {
+    if (connection.readyState && userCxt.isAdmin) {
       connection.send(message);
     }
   };
 
-  const handleClose = () => {
+  const handleLogout = () => {
     const data = JSON.stringify({
       event: "logout",
       token: userCxt.token,
@@ -135,9 +156,21 @@ const Chat = () => {
     userCxt.logout();
   };
 
+  let messageList = null;
+
+  if (messages) {
+    messageList = messages.map((msg) =>
+      msg.name === userCxt.name ? (
+        <Message msg={msg} right />
+      ) : (
+        <Message msg={msg} />
+      )
+    );
+  }
+
   return (
     <>
-      <Header closeConnection={handleClose} />
+      <Header closeConnection={handleLogout} />
       <Box padding={3} boxShadow={3}>
         <TopPanel
           usersOnline={usersOnline}
@@ -152,14 +185,9 @@ const Chat = () => {
           wrap="nowrap"
           className={clsx(classes.list)}
         >
-          <Message self />
-          <Message />
-          <Message />
-          <Message self />
-          <Message self />
-          <Message />
+          {messageList}
         </Grid>
-        <Controls send={handleSendMessage} />
+        <Controls send={handleSendMessage}/>
       </Box>
     </>
   );

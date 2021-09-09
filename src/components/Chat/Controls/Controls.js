@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import { Button, Grid, Icon } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import clsx from "clsx";
+import Context from '../../../context/userContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Controls = (props) => {
+  const userCxt = useContext(Context);
   const classes = useStyles();
   const [message, setMessage] = useState("");
   const theme = useTheme();
@@ -54,12 +56,11 @@ const Controls = (props) => {
           <TextField
             id="standard-multiline-flexible"
             label="Введите сообщение"
-            multiline
-            maxRows={3}
             value={message}
             onChange={handleChange}
             required
             inputProps={{ maxLength: 200 }}
+            disabled={userCxt.isMuted}
           />
         </Grid>
         <Grid item xs={12} sm={3}>
@@ -69,6 +70,7 @@ const Controls = (props) => {
             type="submit"
             endIcon={<Icon>send</Icon>}
             fullWidth
+            disabled={userCxt.isMuted}
           >
             Отправить
           </Button>

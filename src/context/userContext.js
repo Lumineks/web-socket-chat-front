@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import randomColor from "randomcolor";
 
 const userContext = React.createContext({
   token: "",
@@ -44,11 +45,12 @@ export const UserContextProvider = (props) => {
   };
 
   const handleMute = (mute) => {
-    if (isAdmin) setIsMuted(mute);
+    console.log("from context --  ", mute);
+    setIsMuted(mute);
   };
 
   const handleBan = (ban) => {
-    if (isAdmin) setIsBanned(ban);
+    setIsBanned(ban);
   };
 
   const contextValue = {
