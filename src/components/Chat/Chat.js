@@ -71,10 +71,13 @@ const Chat = () => {
           break;
         }
         case "muteToggled": {
-          console.log(`call setMute  -  ${userCxt.isMuted} - `);
-          
-          // userCxt.logout();
           userCxt.setMute(parsedData.isMuted);
+
+          if (parsedData.isMuted) {
+            alert("Вы в муте, отправка сообщений недоступна");
+          } else {
+            alert("Мут был снят, отправка сообщений снова доступна");
+          }
 
           break;
         }
@@ -112,6 +115,7 @@ const Chat = () => {
       event: "message",
       text: text,
       date: date,
+      color: userCxt.color,
       token: userCxt.token,
     });
     console.log(message);
@@ -161,9 +165,9 @@ const Chat = () => {
   if (messages) {
     messageList = messages.map((msg) =>
       msg.name === userCxt.name ? (
-        <Message msg={msg} right />
+        <Message msg={msg} right key={msg.name + msg.date} />
       ) : (
-        <Message msg={msg} />
+        <Message msg={msg} key={msg.name + msg.date} />
       )
     );
   }
@@ -187,7 +191,7 @@ const Chat = () => {
         >
           {messageList}
         </Grid>
-        <Controls send={handleSendMessage}/>
+        <Controls send={handleSendMessage} />
       </Box>
     </>
   );

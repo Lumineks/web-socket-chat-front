@@ -31,17 +31,28 @@ const Controls = (props) => {
   const [message, setMessage] = useState("");
   const theme = useTheme();
   const isMatchesMd = useMediaQuery(theme.breakpoints.up("md"));
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
 
   const handleChange = (event) => {
+    if(event.target.value.length > 200) return;
+
     setMessage(event.target.value);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    props.send(message);
-    setMessage("");
-    console.log("send");
+    if(!isTimerRunning) {
+      props.send(message);
+      setMessage("");
+    }else {
+      alert("Вы можете отправлять сообщение 1 раз в 15 секунд");
+    }
+    
+    setIsTimerRunning(true);
+    setTimeout(() => {
+      setIsTimerRunning(false);
+    }, 15000);
   };
 
   return (
@@ -60,7 +71,7 @@ const Controls = (props) => {
             onChange={handleChange}
             required
             inputProps={{ maxLength: 200 }}
-            disabled={userCxt.isMuted}
+            disabled={!!userCxt.isMuted}
           />
         </Grid>
         <Grid item xs={12} sm={3}>
@@ -70,7 +81,7 @@ const Controls = (props) => {
             type="submit"
             endIcon={<Icon>send</Icon>}
             fullWidth
-            disabled={userCxt.isMuted}
+            disabled={!!userCxt.isMuted}
           >
             Отправить
           </Button>

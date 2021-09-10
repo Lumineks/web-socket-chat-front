@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import randomColor from "randomcolor";
+import colorGenerator from "../utils/colorGenerator";
 
 const userContext = React.createContext({
   token: "",
@@ -9,6 +9,7 @@ const userContext = React.createContext({
   isMuted: false,
   isBanned: false,
   isAdmin: false,
+  color: "",
   login: (token, name, isAdmin, isMuted, isBanned) => {},
   logout: () => {},
   setMute: (mute) => {},
@@ -22,6 +23,7 @@ export const UserContextProvider = (props) => {
   const [isAdmin, setIsAdmin] = useState("");
   const [isMuted, setIsMuted] = useState("");
   const [isBanned, setIsBanned] = useState("");
+  const [color, setColor] = useState("");
 
   const userIsLoggedIn = !!token;
   // const userIsLoggedIn = true;
@@ -33,6 +35,10 @@ export const UserContextProvider = (props) => {
     setIsAdmin(userData.isAdmin);
     setIsMuted(userData.isMuted);
     setIsBanned(userData.isBanned);
+
+    const rmColor = colorGenerator();
+
+    setColor(rmColor)
   };
 
   const logoutHandler = () => {
@@ -61,6 +67,7 @@ export const UserContextProvider = (props) => {
     isMuted: isMuted,
     isBanned: isBanned,
     isAdmin: isAdmin,
+    color: color,
     login: loginHandler,
     logout: logoutHandler,
     setMute: handleMute,

@@ -85,7 +85,7 @@ const TopPanel = ({ usersOnline, allUsers, handleMute, handleBan }) => {
   };
 
   const usersList = usersOnline.map((user) => (
-    <ListItem classes={{ ...itemClasses }}>
+    <ListItem classes={{ ...itemClasses }} key={user.name}>
       <ListItemText
         primary={user.name}
         secondary={user.email}
@@ -118,7 +118,7 @@ const TopPanel = ({ usersOnline, allUsers, handleMute, handleBan }) => {
   let allUsersList = null;
   if (userCxt.isAdmin) {
     allUsersList = allUsers.map((user) => (
-      <ListItem classes={{ ...itemClasses }}>
+      <ListItem classes={{ ...itemClasses }} key={user.name}>
         <ListItemText
           primary={user.name}
           secondary={user.email}
@@ -154,8 +154,7 @@ const TopPanel = ({ usersOnline, allUsers, handleMute, handleBan }) => {
       <Box marginBottom={3}>
         <Grid container justifyContent="space-between" spacing={1}>
           <Grid item>
-            {userCxt.userName}
-            {/* <h2>Привет, username</h2> */}
+            <h2>Привет, <span style={{color: userCxt.color}}>{userCxt.name}</span></h2>
           </Grid>
 
           <Grid item>
@@ -191,29 +190,6 @@ const TopPanel = ({ usersOnline, allUsers, handleMute, handleBan }) => {
             </Grid>
             <List dense>
               {usersList}
-              {/* <ListItem
-                classes={{
-                  gutters: classes.ItemGutters,
-                  root: classes.itemRoot,
-                }}
-              >
-                <ListItemText
-                  primary="Zoren harriss"
-                  secondary="someoneemail@gmail.com"
-                  classes={{ root: classes.itemTextRoot }}
-                />
-                {!userCxt.isAdmin && (
-                  <ListItemSecondaryAction>
-                    <Button classes={{ text: classes.btnText }}>Mute</Button>
-                    <Button
-                      classes={{ text: classes.btnText }}
-                      color="secondary"
-                    >
-                      Ban
-                    </Button>
-                  </ListItemSecondaryAction>
-                )}
-              </ListItem> */}
             </List>
             {userCxt.isAdmin && (
               <>

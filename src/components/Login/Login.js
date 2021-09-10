@@ -1,21 +1,24 @@
-import clsx from "clsx";
 import { useState, useContext } from "react";
-import TextField from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import { Button, CircularProgress } from "@material-ui/core";
-import Context from "../../context/userContext";
 import axios from "axios";
+import clsx from "clsx";
+import {
+  TextField,
+  makeStyles,
+  Input,
+  InputLabel,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  Button,
+  CircularProgress,
+} from "@material-ui/core/";
+import { Visibility, VisibilityOff } from "@material-ui/icons/";
+
+import Context from "../../context/userContext";
 
 const useStyles = makeStyles((theme) => ({
   header: {
-    paddingTop: 15,
+    paddingTop: 30,
     paddingBottom: 5,
     textAlign: "center",
   },
@@ -56,14 +59,11 @@ const Login = () => {
     setValues({ ...values, showPassword: !values.showPassword });
   };
 
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
-
   const handleLogin = (e) => {
     e.preventDefault();
 
     setIsLoading(true);
+    
     const userData = {
       username: values.userName,
       password: values.password,
@@ -77,7 +77,10 @@ const Login = () => {
         userCxt.login(response.data);
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response) {
+          alert(error.response.data);
+        }
+        console.log('Login request error: ', error);
         setIsLoading(false);
       });
   };
@@ -122,7 +125,6 @@ const Login = () => {
               <InputAdornment position="end">
                 <IconButton
                   onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
                 >
                   {values.showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
