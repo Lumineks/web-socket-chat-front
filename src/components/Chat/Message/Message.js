@@ -7,7 +7,6 @@ import {
   CardContent,
   Avatar,
 } from "@material-ui/core";
-import { red } from "@material-ui/core/colors";
 
 const Message = ({ msg, right }) => {
   const { text, date, name, color } = msg;
@@ -26,7 +25,7 @@ const Message = ({ msg, right }) => {
       marginLeft: "auto",
     },
     avatar: {
-      backgroundColor: red[500],
+      backgroundColor: color,
     },
   }));
 
