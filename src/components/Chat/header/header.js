@@ -1,10 +1,13 @@
-import { useState} from "react";
+import { useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { Button, Grid } from "@material-ui/core";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import IconButton from "@material-ui/core/IconButton";
+import {
+  Button,
+  Grid,
+  useMediaQuery,
+  Menu,
+  MenuItem,
+  IconButton,
+} from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import clsx from "clsx";
 
@@ -33,12 +36,14 @@ const Header = (props) => {
     props.closeConnection();
   };
 
-  let logoutContent = (
-    <Grid item>
-      <Button onClick={handleLogout}>Выйти из чата</Button>
-    </Grid>
-  );
-  if (!useMediaQuery(theme.breakpoints.up("sm"))) {
+  let logoutContent = null;
+  if (useMediaQuery(theme.breakpoints.up("sm"))) {
+    logoutContent = (
+      <Grid item>
+        <Button onClick={handleLogout}>Выйти из чата</Button>
+      </Grid>
+    );
+  } else {
     logoutContent = (
       <Grid item>
         <IconButton onClick={handleClick}>

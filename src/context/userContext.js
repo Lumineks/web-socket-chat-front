@@ -37,7 +37,6 @@ export const UserContextProvider = (props) => {
     setIsBanned(userData.isBanned);
 
     const rmColor = colorGenerator();
-
     setColor(rmColor)
   };
 
@@ -51,7 +50,6 @@ export const UserContextProvider = (props) => {
   };
 
   const handleMute = (mute) => {
-    console.log("from context --  ", mute);
     setIsMuted(mute);
   };
 

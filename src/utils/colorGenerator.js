@@ -1,4 +1,4 @@
-// accessible colors on white background generator
+// accessible colors on white background
 const colors = [
   "#111827",
   "#4B5563",

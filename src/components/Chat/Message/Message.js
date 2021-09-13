@@ -1,12 +1,13 @@
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
-import CardContent from "@material-ui/core/CardContent";
-import Avatar from "@material-ui/core/Avatar";
-import Typography from "@material-ui/core/Typography";
+import {
+  Card,
+  CardHeader,
+  Typography,
+  CardContent,
+  Avatar,
+} from "@material-ui/core";
 import { red } from "@material-ui/core/colors";
-
 
 const Message = ({ msg, right }) => {
   const { text, date, name, color } = msg;

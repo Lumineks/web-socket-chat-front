@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-import { Box, Button, Grid } from "@material-ui/core";
+import { Box, Grid } from "@material-ui/core";
+
 import Context from "../../context/userContext";
-import InfoPanel from "./infoPanel/InfoPanel";
 import Message from "./Message/Message";
 import Header from "./header/header";
 import Controls from "./Controls/Controls";
@@ -41,63 +41,56 @@ const Chat = () => {
     };
 
     connection.onclose = (event) => {
-      if (event.wasClean) {
-        console.log("closed successfuly");
-      } else {
-        console.log("lost connection");
-      }
-
-      console.log("Код: " + event.code);
       userCxt.logout();
     };
 
     connection.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
-      console.log(parsedData);
-      switch (parsedData.event) {
-        case "message": {
-          const { message } = parsedData;
-          setMessages((prevmsges) => {
-            const messages = [...prevmsges];
-            messages.unshift(message);
-            return messages;
-          });
 
-          break;
-        }
-        case "usersOnline": {
-          console.log(parsedData);
-          setUsersOnline(parsedData.users);
-          break;
-        }
-        case "muteToggled": {
-          userCxt.setMute(parsedData.isMuted);
+      if (parsedData.event === "message") {
+        const { message } = parsedData;
+        setMessages((prevmsges) => {
+          const updatedMessages = [...prevmsges];
+          updatedMessages.unshift(message);
+          return updatedMessages;
+        });
 
-          if (parsedData.isMuted) {
-            alert("Вы в муте, отправка сообщений недоступна");
-          } else {
-            alert("Мут был снят, отправка сообщений снова доступна");
-          }
+        return;
+      }
 
-          break;
-        }
-        case "allUsers": {
-          console.log("all users from db", parsedData.users);
-          setAllUsers(parsedData.users);
+      if (parsedData.event === "muteToggled") {
+        userCxt.setMute(parsedData.isMuted);
 
-          break;
+        if (parsedData.isMuted) {
+          alert("Вы в муте, отправка сообщений недоступна");
+        } else {
+          alert("Мут был снят, отправка сообщений снова доступна");
         }
-        case "refreshOnlineUsers": {
-          const data = JSON.stringify({
-            event: "login",
-            token: userCxt.token,
-          });
 
-          connection.send(data);
-          break;
-        }
-        default:
-          break;
+        return;
+      }
+
+      if (parsedData.event === "usersOnline") {
+        setUsersOnline(parsedData.users);
+
+        return;
+      }
+
+      if (parsedData.event === "refreshOnlineUsers") {
+        const data = JSON.stringify({
+          event: "login",
+          token: userCxt.token,
+        });
+
+        connection.send(data);
+
+        return;
+      }
+
+      if (parsedData.event === "allUsers") {
+        setAllUsers(parsedData.users);
+
+        return;
       }
     };
 
@@ -109,16 +102,16 @@ const Chat = () => {
   }, []);
 
   const handleSendMessage = (text) => {
-    console.log(userCxt);
     const date = new Date().toLocaleString();
+
     const message = JSON.stringify({
       event: "message",
+      token: userCxt.token,
       text: text,
       date: date,
       color: userCxt.color,
-      token: userCxt.token,
     });
-    console.log(message);
+
     if (connection.readyState) {
       connection.send(message);
     }
@@ -127,8 +120,8 @@ const Chat = () => {
   const handleMute = (isMuted, name) => {
     const message = JSON.stringify({
       event: "toggleMute",
-      isMuted: isMuted,
       token: userCxt.token,
+      isMuted: isMuted,
       userToMuteName: name,
     });
 
@@ -140,8 +133,8 @@ const Chat = () => {
   const handleBan = (isBanned, name) => {
     const message = JSON.stringify({
       event: "toggleBan",
-      isBanned: isBanned,
       token: userCxt.token,
+      isBanned: isBanned,
       userToBanName: name,
     });
 
@@ -155,13 +148,13 @@ const Chat = () => {
       event: "logout",
       token: userCxt.token,
     });
+
     connection.send(data);
     connection.close();
     userCxt.logout();
   };
 
   let messageList = null;
-
   if (messages) {
     messageList = messages.map((msg) =>
       msg.name === userCxt.name ? (
@@ -182,7 +175,6 @@ const Chat = () => {
           handleMute={handleMute}
           handleBan={handleBan}
         />
-        {/* <InfoPanel usersOnline={usersOnline} /> */}
         <Grid
           container
           direction="column-reverse"

@@ -1,10 +1,9 @@
 import { useState, useContext } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import { Button, Grid, Icon } from "@material-ui/core";
+import { Button, Grid, Icon, TextField } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import clsx from "clsx";
-import Context from '../../../context/userContext';
+import Context from "../../../context/userContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,7 +33,7 @@ const Controls = (props) => {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
   const handleChange = (event) => {
-    if(event.target.value.length > 200) return;
+    if (event.target.value.length > 200) return;
 
     setMessage(event.target.value);
   };
@@ -42,13 +41,13 @@ const Controls = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if(!isTimerRunning) {
+    if (!isTimerRunning) {
       props.send(message);
       setMessage("");
-    }else {
+    } else {
       alert("Вы можете отправлять сообщение 1 раз в 15 секунд");
     }
-    
+
     setIsTimerRunning(true);
     setTimeout(() => {
       setIsTimerRunning(false);
