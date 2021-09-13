@@ -41,6 +41,11 @@ const Controls = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    if (message.trim().length === 0) {
+      alert("Сообщение не может быть пустым");
+      return;
+    }
+
     if (!isTimerRunning) {
       props.send(message);
       setMessage("");

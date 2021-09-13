@@ -40,7 +40,7 @@ const Chat = () => {
       connection.send(data);
     };
 
-    connection.onclose = (event) => {
+    connection.onclose = () => {
       userCxt.logout();
     };
 
@@ -99,6 +99,10 @@ const Chat = () => {
     };
 
     setConnection(connection);
+
+    return () => {
+      setConnection(null);
+    }
   }, []);
 
   const handleSendMessage = (text) => {
