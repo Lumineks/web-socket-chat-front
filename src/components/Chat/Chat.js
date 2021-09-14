@@ -27,17 +27,10 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const connection = new WebSocket("ws://localhost:5000");
+    const connection = new WebSocket(`ws://localhost:${process.env.REACT_APP_WS_PORT}?token=${userCxt.token}`);
 
     connection.onopen = () => {
       console.log("connected");
-
-      const data = JSON.stringify({
-        event: "login",
-        token: userCxt.token,
-      });
-
-      connection.send(data);
     };
 
     connection.onclose = () => {
@@ -49,9 +42,12 @@ const Chat = () => {
 
       if (parsedData.event === "message") {
         const { message } = parsedData;
+
         setMessages((prevmsges) => {
           const updatedMessages = [...prevmsges];
+          
           updatedMessages.unshift(message);
+
           return updatedMessages;
         });
 
@@ -59,9 +55,10 @@ const Chat = () => {
       }
 
       if (parsedData.event === "muteToggled") {
-        userCxt.setMute(parsedData.isMuted);
+        const isMuted = parsedData.data;
+        userCxt.setMute(isMuted);
 
-        if (parsedData.isMuted) {
+        if (isMuted) {
           alert("Вы в муте, отправка сообщений недоступна");
         } else {
           alert("Мут был снят, отправка сообщений снова доступна");
@@ -71,24 +68,13 @@ const Chat = () => {
       }
 
       if (parsedData.event === "usersOnline") {
-        setUsersOnline(parsedData.users);
-
-        return;
-      }
-
-      if (parsedData.event === "refreshOnlineUsers") {
-        const data = JSON.stringify({
-          event: "login",
-          token: userCxt.token,
-        });
-
-        connection.send(data);
+        setUsersOnline(parsedData.data);
 
         return;
       }
 
       if (parsedData.event === "allUsers") {
-        setAllUsers(parsedData.users);
+        setAllUsers(parsedData.data);
 
         return;
       }
