@@ -27,7 +27,9 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const connection = new WebSocket(`ws://localhost:${process.env.REACT_APP_WS_PORT}?token=${userCxt.token}`);
+    const connection = new WebSocket(
+      `ws://localhost:${process.env.REACT_APP_WS_PORT}?token=${userCxt.token}`
+    );
 
     connection.onopen = () => {
       console.log("connected");
@@ -38,15 +40,15 @@ const Chat = () => {
     };
 
     connection.onmessage = (event) => {
-      const parsedData = JSON.parse(event.data);
+      const parsedResponse = JSON.parse(event.data);
 
-      if (parsedData.event === "message") {
-        const { message } = parsedData;
+      if (parsedResponse.event === "message") {
+        const { data } = parsedResponse;
 
         setMessages((prevmsges) => {
           const updatedMessages = [...prevmsges];
-          
-          updatedMessages.unshift(message);
+
+          updatedMessages.unshift(data);
 
           return updatedMessages;
         });
@@ -54,8 +56,16 @@ const Chat = () => {
         return;
       }
 
-      if (parsedData.event === "muteToggled") {
-        const isMuted = parsedData.data;
+      if (parsedResponse.event === "msgDelay") {
+        const { data } = parsedResponse;
+
+        alert(data.text);
+
+        return;
+      }
+
+      if (parsedResponse.event === "muteToggled") {
+        const isMuted = parsedResponse.data;
         userCxt.setMute(isMuted);
 
         if (isMuted) {
@@ -67,14 +77,14 @@ const Chat = () => {
         return;
       }
 
-      if (parsedData.event === "usersOnline") {
-        setUsersOnline(parsedData.data);
+      if (parsedResponse.event === "usersOnline") {
+        setUsersOnline(parsedResponse.data);
 
         return;
       }
 
-      if (parsedData.event === "allUsers") {
-        setAllUsers(parsedData.data);
+      if (parsedResponse.event === "allUsers") {
+        setAllUsers(parsedResponse.data);
 
         return;
       }
@@ -88,7 +98,7 @@ const Chat = () => {
 
     return () => {
       setConnection(null);
-    }
+    };
   }, []);
 
   const handleSendMessage = (text) => {
