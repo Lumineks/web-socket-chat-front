@@ -144,12 +144,6 @@ const Chat = () => {
   };
 
   const handleLogout = () => {
-    const data = JSON.stringify({
-      event: "logout",
-      token: userCxt.token,
-    });
-
-    connection.send(data);
     connection.close();
     userCxt.logout();
   };

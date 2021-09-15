@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Button, Grid, Icon, TextField } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -30,7 +30,9 @@ const Controls = (props) => {
   const [message, setMessage] = useState("");
   const theme = useTheme();
   const isMatchesMd = useMediaQuery(theme.breakpoints.up("md"));
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
+
+  const [lastMsgTime, setLastMsgTime] = useState(new Date().getTime() - 15000);
+
 
   const handleChange = (event) => {
     if (event.target.value.length > 200) return;
@@ -46,17 +48,17 @@ const Controls = (props) => {
       return;
     }
 
-    if (!isTimerRunning) {
+    const newMsgTime = new Date().getTime();
+
+    const delay = (newMsgTime - lastMsgTime) / 1000;
+
+    if (delay >= 15) {
       props.send(message);
       setMessage("");
+      setLastMsgTime(newMsgTime);
     } else {
       alert("Вы можете отправлять сообщение 1 раз в 15 секунд");
     }
-
-    setIsTimerRunning(true);
-    setTimeout(() => {
-      setIsTimerRunning(false);
-    }, 15000);
   };
 
   return (
