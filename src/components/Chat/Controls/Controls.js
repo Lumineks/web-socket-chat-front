@@ -44,7 +44,7 @@ const Controls = (props) => {
     event.preventDefault();
 
     if (message.trim().length === 0) {
-      alert("Сообщение не может быть пустым");
+      alert("Сообщение не должно быть пустым");
       return;
     }
 

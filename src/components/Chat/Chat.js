@@ -106,7 +106,6 @@ const Chat = () => {
 
     const message = JSON.stringify({
       event: "message",
-      token: userCxt.token,
       text: text,
       date: date,
       color: userCxt.color,
@@ -120,7 +119,6 @@ const Chat = () => {
   const handleMute = (isMuted, name) => {
     const message = JSON.stringify({
       event: "toggleMute",
-      token: userCxt.token,
       isMuted: isMuted,
       userToMuteName: name,
     });
@@ -133,7 +131,6 @@ const Chat = () => {
   const handleBan = (isBanned, name) => {
     const message = JSON.stringify({
       event: "toggleBan",
-      token: userCxt.token,
       isBanned: isBanned,
       userToBanName: name,
     });
